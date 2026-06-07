@@ -612,6 +612,30 @@
 
   .ligne-medicament:last-child { border-bottom: none; }
 
+  /* BOUTON HAMBURGER */
+  .btn-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--bleu);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+  }
+  .btn-hamburger:hover { background: var(--gris); }
+
+  /* OVERLAY MOBILE */
+  .overlay-mobile {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 99;
+  }
+  .overlay-mobile.visible { display: block; }
+
   /* RESPONSIVE */
   @media (max-width: 768px) {
     .barre-laterale { transform: translateX(-100%); }
@@ -619,6 +643,13 @@
     .contenu-principal { margin-left: 0; }
     .grille-champs { grid-template-columns: 1fr; }
     .grille-stats { grid-template-columns: 1fr 1fr; }
+    .btn-hamburger { display: inline-flex; align-items: center; }
+    .zone-contenu { padding: 16px; }
+    .en-tete { padding: 12px 16px; }
+    .grille-stats { grid-template-columns: 1fr; }
+    .carte-connexion { padding: 32px 24px; }
+    table { font-size: 0.8rem; }
+    table th, table td { padding: 8px 10px; }
   }
 
   .vide { text-align: center; padding: 40px; color: var(--texte-leger); font-size: 0.9rem; }
@@ -699,7 +730,10 @@
     <!-- CONTENU PRINCIPAL -->
     <main class="contenu-principal">
       <div class="en-tete">
-        <h2 id="titre-page">Tableau de bord</h2>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="btn-hamburger" onclick="toggleMenu()" aria-label="Menu">☰</button>
+          <h2 id="titre-page">Tableau de bord</h2>
+        </div>
         <div class="badge-date" id="badge-date"></div>
       </div>
 
@@ -1033,7 +1067,22 @@
   </div>
 </div>
 
+<!-- OVERLAY MOBILE -->
+<div class="overlay-mobile" id="overlay-mobile" onclick="fermerMenu()"></div>
+
 <script>
+// ===== MENU MOBILE =====
+function toggleMenu() {
+  const barre = document.getElementById('barre-laterale');
+  const overlay = document.getElementById('overlay-mobile');
+  barre.classList.toggle('ouverte');
+  overlay.classList.toggle('visible');
+}
+function fermerMenu() {
+  document.getElementById('barre-laterale').classList.remove('ouverte');
+  document.getElementById('overlay-mobile').classList.remove('visible');
+}
+
 // ===== DONNÉES =====
 const UTILISATEURS = {
   'admin':       { mdp: 'admin123',  nom: 'Administrateur',    role: 'admin',       affichage: 'Admin' },
@@ -1118,6 +1167,7 @@ function afficherPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-lien').forEach(l => l.classList.remove('actif'));
   document.getElementById('page-' + page).classList.add('active');
+  fermerMenu(); // ferme le menu sur mobile
   const titres = {
     'tableau-bord': 'Tableau de bord', 'patients': 'Gestion des patients',
     'consultations': 'Consultations', 'ordonnances': 'Ordonnances',
